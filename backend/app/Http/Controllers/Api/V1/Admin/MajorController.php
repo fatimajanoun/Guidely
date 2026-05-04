@@ -102,7 +102,6 @@ class MajorController extends Controller
         return $this->success(new MajorResource($major),"Major Fetched Successfully",200);
     }
 
-<<<<<<< TI-49
     public function update(UpdateMajorRequest $request,Major $major)
     {
         $validated = $request->validated();
@@ -122,6 +121,4 @@ class MajorController extends Controller
 
         return $this->success(new MajorResource($major->load(['category','skills'])),"Major Updated Successfully",200);
     }
-=======
->>>>>>> dev
 }
