@@ -9,6 +9,7 @@ it('allows a user to register successfully', function () {
 
     $response = $this->postJson('/api/v1/auth/register', [
         'name' => 'Fatima Janoun',
+        'username' => 'fatimajanoun',
         'email' => 'fatima@test.com',
         'password' => 'password123',
         'password_confirmation' => 'password123',
@@ -29,6 +30,7 @@ it('allows a user to register successfully', function () {
     $this->assertDatabaseHas('users', [
         'email' => 'fatima@test.com',
         'name' => 'Fatima Janoun',
+        'username' => 'fatimajanoun',
     ]);
 
     $this->assertDatabaseCount('users', 1);
@@ -48,6 +50,25 @@ it('fails when email already exists', function () {
     ])
         ->assertUnprocessable()
         ->assertJsonValidationErrors(['email']);
+
+    $this->assertDatabaseCount('users', 1);
+});
+
+it('fails when username already exists', function () {
+
+    User::factory()->create([
+        'username' => 'existingusername',
+    ]);
+
+    $this->postJson('/api/v1/auth/register', [
+        'name' => 'New User',
+        'username' => 'existingusername',
+        'email' => 'newuser@test.com',
+        'password' => 'password123',
+        'password_confirmation' => 'password123',
+    ])
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors(['username']);
 
     $this->assertDatabaseCount('users', 1);
 });
