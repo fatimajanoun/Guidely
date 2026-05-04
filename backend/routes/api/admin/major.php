@@ -10,4 +10,5 @@ Route::prefix('admin/majors')
         Route::get('/', 'index');
         Route::post('/', 'store');
         Route::get('/{major}','show');
+        Route::put('/{major}','update');
 });
