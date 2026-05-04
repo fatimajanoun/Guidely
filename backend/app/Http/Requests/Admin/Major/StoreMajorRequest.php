@@ -35,23 +35,14 @@ class StoreMajorRequest extends FormRequest
 
             'duration_years' => ['required', 'integer', 'min:1'],
 
-            'difficulty_level' => [
-                'required',
-                'in:easy,medium,hard,very_hard'
-            ],
+            'difficulty_level' => ['required','in:easy,medium,hard,very_hard'],
 
             'salary_min' => ['required', 'numeric', 'min:0'],
             'salary_max' => ['required', 'numeric', 'min:0'],
 
-            'local_demand' => [
-                'required',
-                'in:low,medium,high,very_high'
-            ],
+            'local_demand' => ['required','in:low,medium,high,very_high'],
 
-            'international_demand' => [
-                'required',
-                'in:low,medium,high,very_high'
-            ],
+            'international_demand' => ['required','in:low,medium,high,very_high'],
 
             'is_featured' => ['nullable', 'boolean'],
 

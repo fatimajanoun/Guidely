@@ -201,3 +201,71 @@ test('can show single major' , function() {
     ]);
 
 });
+
+test('can update major and sync skills', function () {
+    $oldCategory = Category::factory()->create();
+    $newCategory = Category::factory()->create();
+
+    $oldSkills = Skill::factory()->count(3)->create();
+    $newSkills = Skill::factory()->count(3)->create();
+
+    $major = Major::factory()->create([
+        'category_id' => $oldCategory->id,
+        'name_en' => 'Computer Science',
+        'slug' => 'computer-science',
+    ]);
+
+    $major->skills()->attach($oldSkills->pluck('id')->toArray());
+
+    $payload = [
+        'name_en' => 'Medicine',
+        'name_ar' => 'الطب البشري',
+        'category_id' => $newCategory->id,
+        'slug' => 'medicine',
+        'overview' => 'An overview of the medicine major.',
+        'description' => 'A detailed description of the medicine major.',
+        'duration_years' => 6,
+        'difficulty_level' => 'very_hard',
+        'salary_min' => 80000,
+        'salary_max' => 250000,
+        'local_demand' => 'very_high',
+        'international_demand' => 'very_high',
+        'is_featured' => true,
+        'cover_image' => 'majors/medicine.jpg',
+        'skills' => $newSkills->pluck('id')->toArray(),
+    ];
+
+    $response = $this->putJson("/api/v1/admin/majors/{$major->id}", $payload);
+
+    $response->assertStatus(200);
+
+    $response->assertJson([
+        'message' => 'Major Updated Successfully',
+        'data' => [
+            'id' => $major->id,
+            'name_en' => 'Medicine',
+            'slug' => 'medicine',
+        ],
+    ]);
+
+    $this->assertDatabaseHas('majors', [
+        'id' => $major->id,
+        'name_en' => 'Medicine',
+        'slug' => 'medicine',
+        'category_id' => $newCategory->id,
+    ]);
+
+    foreach ($newSkills as $skill) {
+        $this->assertDatabaseHas('major_skill', [
+            'major_id' => $major->id,
+            'skill_id' => $skill->id,
+        ]);
+    }
+
+    foreach ($oldSkills as $skill) {
+        $this->assertDatabaseMissing('major_skill', [
+            'major_id' => $major->id,
+            'skill_id' => $skill->id,
+        ]);
+    }
+});
