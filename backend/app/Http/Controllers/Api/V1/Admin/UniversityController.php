@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\University\IndexUniversityRequest;
 use App\Http\Requests\Admin\University\StoreUniversityRequest;
 use App\Http\Requests\Admin\University\UpdateUniversityRequest;
-use App\Http\Resources\AdminUniversityTableResource;
 use App\Http\Resources\UniversityResource;
 use App\Models\University;
 use App\Traits\ApiResponseTrait;
@@ -42,7 +41,7 @@ class UniversityController extends Controller
             ->withQueryString();
 
         return $this->success(
-            AdminUniversityTableResource::collection($universities),
+            UniversityResource::collection($universities),
             'Universities retrieved successfully',
             200,
         );

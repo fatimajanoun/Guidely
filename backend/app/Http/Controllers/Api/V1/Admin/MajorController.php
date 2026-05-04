@@ -11,6 +11,7 @@ use App\Http\Requests\Admin\Major\StoreMajorRequest;
 use App\Http\Requests\Admin\Major\IndexMajorRequest;
 use App\Http\Requests\Admin\Major\UpdateMajorRequest;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Http\JsonResponse;
 
 class MajorController extends Controller
 {
@@ -101,6 +102,7 @@ class MajorController extends Controller
         return $this->success(new MajorResource($major),"Major Fetched Successfully",200);
     }
 
+<<<<<<< TI-49
     public function update(UpdateMajorRequest $request,Major $major)
     {
         $validated = $request->validated();
@@ -120,4 +122,6 @@ class MajorController extends Controller
 
         return $this->success(new MajorResource($major->load(['category','skills'])),"Major Updated Successfully",200);
     }
+=======
+>>>>>>> dev
 }
