@@ -8,4 +8,5 @@ Route::prefix('admin/majors/{major}/faqs')
     ->middleware(['auth:sanctum', 'role:admin'])
     ->group(function (): void {
         Route::get('/', 'index')->name('api.v1.admin.majors.faqs.index');
+        Route::post('/', 'store')->name('api.v1.admin.majors.faqs.store');
     });

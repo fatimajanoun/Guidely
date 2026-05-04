@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\Faq\StoreFaqRequest;
 use App\Http\Resources\FaqResource;
 use App\Models\Major;
 use App\Traits\ApiResponseTrait;
@@ -23,6 +24,17 @@ class FaqController extends Controller
             FaqResource::collection($faqs),
             'Major FAQs Fetched Successfully',
             200
+        );
+    }
+
+    public function store(StoreFaqRequest $request, Major $major): JsonResponse
+    {
+        $faq = $major->faqs()->create($request->validated());
+
+        return $this->success(
+            new FaqResource($faq),
+            'FAQ Created Successfully',
+            201
         );
     }
 }
