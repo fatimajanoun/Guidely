@@ -31,30 +31,51 @@ it('requires authentication for admin universities update', function () {
         ->assertUnauthorized();
 });
 
-it('returns paginated universities for admin users with default sorting and table fields', function () {
+it('returns paginated universities for admin users with default sorting and full fields', function () {
     $admin = User::factory()->admin()->create();
 
     $oldest = University::factory()->create([
         'name_en' => 'Oldest University',
+        'name_ar' => 'الجامعة الأقدم',
         'slug' => 'oldest-university',
         'type' => 'public',
         'location' => 'Beirut',
+        'website' => 'https://oldest.example.com',
+        'logo_url' => 'https://cdn.example.com/oldest-logo.png',
+        'description_en' => 'Oldest university description.',
+        'description_ar' => 'وصف الجامعة الأقدم.',
+        'founded_year' => 1950,
+        'accreditation' => 'Local Accreditation',
         'created_at' => now()->subDays(3),
     ]);
 
     $middle = University::factory()->create([
         'name_en' => 'Middle University',
+        'name_ar' => 'الجامعة الوسطى',
         'slug' => 'middle-university',
         'type' => 'private',
         'location' => 'Jounieh',
+        'website' => 'https://middle.example.com',
+        'logo_url' => 'https://cdn.example.com/middle-logo.png',
+        'description_en' => 'Middle university description.',
+        'description_ar' => 'وصف الجامعة الوسطى.',
+        'founded_year' => 1970,
+        'accreditation' => 'International Accreditation',
         'created_at' => now()->subDays(2),
     ]);
 
     $latest = University::factory()->create([
         'name_en' => 'Latest University',
+        'name_ar' => 'الجامعة الأحدث',
         'slug' => 'latest-university',
         'type' => 'private',
         'location' => 'Byblos',
+        'website' => 'https://latest.example.com',
+        'logo_url' => 'https://cdn.example.com/latest-logo.png',
+        'description_en' => 'Latest university description.',
+        'description_ar' => 'وصف الجامعة الأحدث.',
+        'founded_year' => 2000,
+        'accreditation' => 'NECHE',
         'created_at' => now()->subDay(),
     ]);
 
@@ -69,10 +90,18 @@ it('returns paginated universities for admin users with default sorting and tabl
                 '*' => [
                     'id',
                     'name_en',
+                    'name_ar',
                     'slug',
                     'type',
                     'location',
+                    'website',
+                    'logo_url',
+                    'description_en',
+                    'description_ar',
+                    'founded_year',
+                    'accreditation',
                     'created_at',
+                    'updated_at',
                 ],
             ],
             'links',
@@ -80,8 +109,18 @@ it('returns paginated universities for admin users with default sorting and tabl
             'meta',
         ])
         ->assertJsonPath('message', 'Universities retrieved successfully')
-        ->assertJsonMissingPath('data.0.name_ar')
         ->assertJsonPath('data.0.id', $latest->id)
+        ->assertJsonPath('data.0.name_en', 'Latest University')
+        ->assertJsonPath('data.0.name_ar', 'الجامعة الأحدث')
+        ->assertJsonPath('data.0.slug', 'latest-university')
+        ->assertJsonPath('data.0.type', 'private')
+        ->assertJsonPath('data.0.location', 'Byblos')
+        ->assertJsonPath('data.0.website', 'https://latest.example.com')
+        ->assertJsonPath('data.0.logo_url', 'https://cdn.example.com/latest-logo.png')
+        ->assertJsonPath('data.0.description_en', 'Latest university description.')
+        ->assertJsonPath('data.0.description_ar', 'وصف الجامعة الأحدث.')
+        ->assertJsonPath('data.0.founded_year', 2000)
+        ->assertJsonPath('data.0.accreditation', 'NECHE')
         ->assertJsonPath('data.1.id', $middle->id)
         ->assertJsonPath('data.2.id', $oldest->id)
         ->assertJsonPath('meta.per_page', 15);
@@ -261,7 +300,7 @@ it('can create university', function () {
         'data' => [
             'id',
             'name_en',
-        ]
+        ],
     ]);
 
     $this->assertDatabaseHas('universities', [
