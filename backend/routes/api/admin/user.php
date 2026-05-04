@@ -8,6 +8,7 @@ Route::prefix('admin/users')
         ->middleware(['auth:sanctum', 'role:admin'])
         ->group(function (): void {
             Route::get('/','index');
+            Route::patch('/{user}/toggleBlock','toggleBlock');
         });
 
 

@@ -18,4 +18,14 @@ class UserController extends Controller
 
         return $this->success(UserResource::collection($users),"Users Fetched Successfully",200);
     }
+
+    public function toggleBlock(User $user)
+    {
+        $user->is_blocked = !$user->is_blocked;
+        $user->save();
+
+        $message = $user->is_blocked ? "{$user->username} blocked successfully" : "{$user->username} unblocked successfully";
+
+        return $this->success(new UserResource($user),$message,200);
+    }
 }
