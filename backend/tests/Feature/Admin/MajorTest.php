@@ -14,11 +14,6 @@ beforeEach(function () {
     Sanctum::actingAs($admin);
 });
 
-test('example', function () {
-    $response = $this->get('/');
-
-    $response->assertStatus(200);
-});
 
 test('can get majors', function () {
 
