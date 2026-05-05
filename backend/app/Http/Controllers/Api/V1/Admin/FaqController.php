@@ -8,6 +8,8 @@ use App\Http\Resources\FaqResource;
 use App\Models\Major;
 use App\Traits\ApiResponseTrait;
 use Illuminate\Http\JsonResponse;
+use App\Http\Requests\Admin\Faq\UpdateFaqRequest;
+use App\Models\Faq;
 
 class FaqController extends Controller
 {
@@ -37,4 +39,15 @@ class FaqController extends Controller
             201
         );
     }
+
+    public function update(UpdateFaqRequest $request, Faq $faq): JsonResponse
+{
+    $faq->update($request->validated());
+
+        return $this->success(
+            new FaqResource($faq->fresh()),
+            'FAQ Updated Successfully',
+            200
+        );
+}
 }
