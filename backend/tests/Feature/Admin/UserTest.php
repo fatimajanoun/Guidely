@@ -30,6 +30,19 @@ test('only admin can get users', function () {
     $response->assertStatus(403);
 });
 
+test('admin can get users by role', function() {
+    $mentors = User::factory(5)->mentor()->create();
+
+    $admin = User::factory()->admin()->create();
+
+    Sanctum::actingAs($admin);
+    $response = $this->getJson('/api/v1/admin/users?role=mentor');
+
+    $response->assertStatus(200);
+
+    $response->assertJsonCount(5,'data');
+});
+
 test('users index returns paginated response structure', function () {
     $admin = User::factory()->admin()->create();
 
