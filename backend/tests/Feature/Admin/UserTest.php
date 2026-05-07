@@ -38,9 +38,11 @@ test('admin can get users by role', function() {
     Sanctum::actingAs($admin);
     $response = $this->getJson('/api/v1/admin/users?role=mentor');
 
-    $response->assertStatus(200);
-
-    $response->assertJsonCount(5,'data');
+    $response->assertStatus(200)
+             ->assertJsonCount(5,'data')
+             ->assertJsonFragment([
+                'role' => 'mentor'
+             ]);
 });
 
 test('users index returns paginated response structure', function () {
