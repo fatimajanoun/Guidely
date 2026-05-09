@@ -121,4 +121,17 @@ class MajorController extends Controller
 
         return $this->success(new MajorResource($major->load(['category','skills'])),"Major Updated Successfully",200);
     }
+
+    public function toggleFeatured(Major $major)
+    {
+        $major->update([
+            'is_featured' => $major->is_featured ? false : true,
+        ]);
+
+        return $this->success(
+            new MajorResource($major),
+            $major->is_featured ? 'Major marked as featured' : 'Major marked as unfeatured',
+            200
+        );
+    }
 }
