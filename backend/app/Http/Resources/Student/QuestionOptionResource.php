@@ -17,7 +17,7 @@ class QuestionOptionResource extends JsonResource
         return [
             'text_en' => $this->text_en,
             'text_ar' => $this->text_ar,
-            'weights' => $this->weights,
+            'weights' => $this->getRawOriginal('weights'),
         ];
     }
 }
