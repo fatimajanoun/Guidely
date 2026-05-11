@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api\V1\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Major;
-use App\Http\Resources\MajorResource;
+use App\Http\Resources\Admin\MajorResource;
 use App\Traits\ApiResponseTrait;
 use App\Http\Requests\Admin\Major\StoreMajorRequest;
 use App\Http\Requests\Admin\Major\IndexMajorRequest;
