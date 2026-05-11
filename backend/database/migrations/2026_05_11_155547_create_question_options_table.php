@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('question_options', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('test_question_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('question_id')->constrained()->cascadeOnDelete();
             $table->text('text_en');
             $table->text('text_ar');
             $table->json('weights');
