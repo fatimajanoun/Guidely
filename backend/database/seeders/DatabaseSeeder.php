@@ -21,16 +21,13 @@ class DatabaseSeeder extends Seeder
             JobOpportunitySeeder::class,
             HiringCompanySeeder::class,
             MarketTrendSeeder::class,
-        ]);
-
-        $this->call([
             CategorySeeder::class,
             MajorSeeder::class,
             MajorPointSeeder::class,
             SkillSeeder::class,
             MajorSkillSeeder::class,
             FaqSeeder::class,
+            QuestionSeeder::class,
         ]);
-    
     }
 }

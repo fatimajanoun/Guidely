@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Faq\StoreFaqRequest;
-use App\Http\Resources\FaqResource;
+use App\Http\Resources\Admin\FaqResource;
 use App\Models\Major;
 use App\Traits\ApiResponseTrait;
 use Illuminate\Http\JsonResponse;

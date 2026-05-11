@@ -34,4 +34,9 @@ class User extends Authenticatable implements MustVerifyEmail
             'is_blocked' => 'boolean',
         ];
     }
+
+    public function quizResults()
+    {
+        return $this->hasMany(QuizResult::class);
+    }
 }
