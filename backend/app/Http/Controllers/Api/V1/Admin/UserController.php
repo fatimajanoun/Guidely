@@ -13,9 +13,11 @@ class UserController extends Controller
 {
     use ApiResponseTrait;
 
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::latest()->paginate(15)->withQueryString();
+        $users = User::when($request->role, fn($q) => $q->where('role', $request->role))
+            ->paginate(15)
+            ->withQueryString();
 
         return $this->success(UserResource::collection($users),"Users Fetched Successfully",200);
     }
