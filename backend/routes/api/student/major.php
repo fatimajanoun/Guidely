@@ -5,7 +5,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('majors')
     ->middleware('auth:sanctum')
+    ->controller(MajorController::class)
     ->group(function (): void {
-        Route::patch('/{major}/favorite', [MajorController::class, 'toggleFavorite'])
+        Route::patch('/{major}/favorite', 'toggleFavorite')
             ->name('api.v1.majors.favorite');
+        Route::get('/{major:slug}/show','show');
     });
