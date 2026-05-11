@@ -5,7 +5,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
 
-it('returns all categories for majors filter dropdown', function () {
+it('returns active categories for majors filter dropdown', function () {
     Category::factory()->create([
         'name_en' => 'Medicine',
         'name_ar' => 'Medicine AR',
@@ -29,7 +29,7 @@ it('returns all categories for majors filter dropdown', function () {
     $response
         ->assertOk()
         ->assertJsonPath('message', 'Categories retrieved successfully')
-        ->assertJsonCount(2, 'data')
+        ->assertJsonCount(1, 'data')
         ->assertJsonStructure([
             'data' => [
                 '*' => [
@@ -39,13 +39,12 @@ it('returns all categories for majors filter dropdown', function () {
                     'slug',
                     'description',
                     'icon',
-                    'is_active',
                     'created_at',
                     'updated_at',
                 ],
             ],
             'message',
         ])
-        ->assertJsonPath('data.0.name_en', 'Business')
-        ->assertJsonPath('data.1.name_en', 'Medicine');
+        ->assertJsonPath('data.0.name_en', 'Medicine')
+        ->assertJsonMissingPath('data.0.is_active');
 });
