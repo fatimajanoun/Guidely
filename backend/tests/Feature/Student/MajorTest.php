@@ -10,7 +10,7 @@ uses(RefreshDatabase::class);
 it('requires authentication to toggle a major favorite', function () {
     $major = Major::factory()->create();
 
-    $this->postJson("/api/v1/majors/{$major->id}/favorite")
+    $this->patchJson("/api/v1/majors/{$major->id}/favorite")
         ->assertUnauthorized();
 });
 
@@ -20,7 +20,7 @@ it('adds a major to favorites for the authenticated user', function () {
 
     Sanctum::actingAs($user);
 
-    $response = $this->postJson("/api/v1/majors/{$major->id}/favorite");
+    $response = $this->patchJson("/api/v1/majors/{$major->id}/favorite");
 
     $response
         ->assertOk()
@@ -41,7 +41,7 @@ it('removes a major from favorites when already favorited', function () {
 
     Sanctum::actingAs($user);
 
-    $response = $this->postJson("/api/v1/majors/{$major->id}/favorite");
+    $response = $this->patchJson("/api/v1/majors/{$major->id}/favorite");
 
     $response
         ->assertOk()
@@ -59,6 +59,6 @@ it('returns not found when toggling a missing major favorite', function () {
 
     Sanctum::actingAs($user);
 
-    $this->postJson('/api/v1/majors/999999/favorite')
+    $this->patchJson('/api/v1/majors/999999/favorite')
         ->assertNotFound();
 });
