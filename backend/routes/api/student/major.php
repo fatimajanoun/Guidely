@@ -9,7 +9,8 @@ Route::prefix('majors')
     ->group(function (): void {
         Route::patch('/{major}/favorite', 'toggleFavorite')
             ->name('api.v1.majors.favorite');
-        Route::get('/{major:slug}/show','show');
-        Route::get('/', [MajorController::class, 'index'])
+        Route::get('/{major:slug}/show','show')
+            ->name('api.v1.majors.show');
+        Route::get('/','index')
             ->name('api.v1.majors.index');
     });
