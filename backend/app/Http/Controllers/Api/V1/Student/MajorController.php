@@ -54,6 +54,8 @@ class MajorController extends Controller
         ]);
 
         return $this->success(new MajorDetailsResource($major),"Major Fetched Successfully",200);
+    }
+    
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
