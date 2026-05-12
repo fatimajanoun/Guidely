@@ -14,7 +14,10 @@ class TestController extends Controller
 
     public function getQuestions()
     {
-        $questions = Question::with('options')->get();
+        $questions = Question::with('options')
+            ->orderBy('section')
+            ->orderBy('order')
+            ->get();
         
         return $this->success(QuestionResource::collection($questions),"Test Questions Fetched Successfully",200);
     }

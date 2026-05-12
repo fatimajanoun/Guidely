@@ -46,8 +46,6 @@ it('authenticated student can get test questions', function () {
                 [
                     'text_en',
                     'text_ar',
-                    'section',
-                    'order',
                     'options'
                 ]
             ],

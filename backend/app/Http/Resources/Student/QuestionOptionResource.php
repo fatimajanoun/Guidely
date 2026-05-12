@@ -15,9 +15,9 @@ class QuestionOptionResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
+            'id'      => $this->id,
             'text_en' => $this->text_en,
             'text_ar' => $this->text_ar,
-            'weights' => $this->getRawOriginal('weights'),
         ];
     }
 }

@@ -17,8 +17,6 @@ class QuestionResource extends JsonResource
         return [
             'text_en' => $this->text_en,
             'text_ar' => $this->text_ar,
-            'section' => $this->section,
-            'order'   => $this->order,
 
             'options' => QuestionOptionResource::collection(
                 $this->whenLoaded('options')
