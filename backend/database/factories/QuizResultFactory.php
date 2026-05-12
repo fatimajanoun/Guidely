@@ -23,7 +23,6 @@ class QuizResultFactory extends Factory
             'answers'          => [1, 3, 5, 7, 9],
             'category_scores'  => ['1' => 17, '2' => 8, '3' => 5],
             'skill_scores'     => ['1' => 5, '2' => 3, '4' => 2],
-            'taken_at'         => $this->faker->dateTimeBetween('-1 month', 'now'),
         ];
     }
 }
