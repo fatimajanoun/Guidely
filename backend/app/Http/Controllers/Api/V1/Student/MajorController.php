@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api\V1\Student;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Student\MajorResource;
+use App\Http\Resources\Student\MajorDetailsResource;
 use App\Models\Major;
 use App\Traits\ApiResponseTrait;
 use Illuminate\Http\JsonResponse;
@@ -53,6 +53,6 @@ class MajorController extends Controller
             'universityMajors.university'
         ]);
 
-        return $this->success(new MajorResource($major),"Major Fetched Successfully",200);
+        return $this->success(new MajorDetailsResource($major),"Major Fetched Successfully",200);
     }
 }
