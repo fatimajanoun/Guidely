@@ -10,4 +10,6 @@ Route::prefix('majors')
         Route::patch('/{major}/favorite', 'toggleFavorite')
             ->name('api.v1.majors.favorite');
         Route::get('/{major:slug}/show','show');
+        Route::get('/', [MajorController::class, 'index'])
+            ->name('api.v1.majors.index');
     });

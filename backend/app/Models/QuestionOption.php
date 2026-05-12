@@ -13,12 +13,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class QuestionOption extends Model
 {
-    protected function casts()
-    {
-        return [
-            'weights' => 'array',
-        ];
-    }
+    protected $casts = [
+        'weights' => 'array',
+    ];
 
     public function question()
     {
