@@ -79,8 +79,7 @@ it('submits quiz successfully', function () {
         'order' => 1,
     ]);
 
-    $option = QuestionOption::create([
-        'question_id' => $question->id,
+    $option = $question->options()->create([
         'text_en' => 'Programming',
         'text_ar' => 'البرمجة',
         'weights' => [1 => 5],
@@ -91,14 +90,12 @@ it('submits quiz successfully', function () {
     ]);
 
     $response->assertStatus(200)
-    ->assertJson([
-        'message' => 'Test Submitted Successfully',
-    ])
-    ->assertJsonStructure([
-        'data' => [
-            'recommendations',
-        ],
-    ]);
+        ->assertJson([
+            'message' => 'Test Submitted Successfully',
+        ])
+        ->assertJsonStructure([
+            'data' => ['recommendations'],
+        ]);
 
     $this->assertDatabaseHas('quiz_results', [
         'user_id' => $user->id,

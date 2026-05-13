@@ -25,6 +25,13 @@ class TestController extends Controller
 
     public function submit(SubmitQuizRequest $request, QuizService $service)
     {
-        return $service->submit($request->validated());
+        $result = $service->submit($request->validated());
+        return $this->success(
+            [
+                'recommendations' => $result['recommendations'],
+            ],
+            'Test Submitted Successfully',
+            200
+        );
     }
 }

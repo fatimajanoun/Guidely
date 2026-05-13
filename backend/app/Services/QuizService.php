@@ -4,13 +4,10 @@ namespace App\Services;
 
 use App\Models\Major;
 use App\Models\QuestionOption;
-use App\Models\QuizResult;
-use App\Traits\ApiResponseTrait;
 use Illuminate\Support\Facades\Auth;
 
 class QuizService
 {
-    use ApiResponseTrait;
     public function submit(array $data)
     {
         // Step 1 — fetch all submitted options with their weights
@@ -55,7 +52,7 @@ class QuizService
                 : round((count(array_intersect($strongSkillIds, $requiredSkillIds)) / count($requiredSkillIds)) * 100);
 
             return [
-                'major_id'=>$major->id,
+                'major_id' => $major->id,
                 'en_major_name' => $major->name_en,
                 'ar_major_name' => $major->name_ar,
                 '_sort'      => $matchPercentage,
@@ -70,16 +67,17 @@ class QuizService
             ]);
 
         // Step 7 — save the result
-        $result = QuizResult::create([
-            'user_id'         => Auth::id(),
+        $result = Auth::user()->quizResults()->create([
             'answers'         => $data['answers'],
             'category_scores' => $categoryScores,
             'skill_scores'    => $skillScores,
             'recommendations' => $recommendations->toArray(),
             'taken_at'        => now(),
         ]);
-        return $this->success([
+
+        return [
             'recommendations' => $recommendations,
-        ], 'Test Submitted Successfully', 200);
+            'quiz_result'     => $result,
+        ];
     }
 }
