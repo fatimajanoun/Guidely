@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1\Student;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Student\MajorDetailsResource;
 use App\Http\Resources\Student\MajorResource;
 use App\Models\Major;
 use App\Traits\ApiResponseTrait;
@@ -54,6 +55,23 @@ class MajorController extends Controller
             200
         );
     }
+
+    public function show(Major $major)
+    {
+        $major->load([
+            'category',
+            'skills',
+            'points',
+            'faqs',
+            'jobOpportunities',
+            'hiringCompanies',
+            'marketTrends',
+            'universityMajors.university'
+        ]);
+
+        return $this->success(new MajorDetailsResource($major),"Major Fetched Successfully",200);
+    }
+
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();

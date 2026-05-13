@@ -11,10 +11,13 @@ Route::prefix('user/favorites')
     });
 
 Route::prefix('majors')
-    ->middleware(['auth:sanctum','role:student'])
+    ->middleware('auth:sanctum')
+    ->controller(MajorController::class)
     ->group(function (): void {
-        Route::patch('/{major}/favorite', [MajorController::class, 'toggleFavorite'])
+        Route::patch('/{major}/favorite', 'toggleFavorite')
             ->name('api.v1.majors.favorite');
-        Route::get('/', [MajorController::class, 'index'])
+        Route::get('/{major:slug}/show','show')
+            ->name('api.v1.majors.show');
+        Route::get('/','index')
             ->name('api.v1.majors.index');
     });
