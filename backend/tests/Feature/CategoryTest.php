@@ -35,7 +35,6 @@ it('returns active categories for majors filter dropdown', function () {
         ->assertJsonStructure([
             'data' => [
                 '*' => [
-                    'id',
                     'name_en',
                     'name_ar',
                     'slug',
@@ -78,7 +77,8 @@ it('returns majors for a specific category' , function () {
                         'is_featured',
                         'cover_image',
                         'category' => [
-                            'name',
+                            'name_en',
+                            'name_ar',
                             'slug',
                         ],
                         'skills' => [

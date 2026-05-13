@@ -29,7 +29,7 @@ class CategoryController extends Controller
 
     public function majors(Category $category)
     {
-        $majors = $category->majors()->paginate(15);
+        $majors = $category->majors()->with(['category','skills'])->paginate(15);
 
         return $this->success(MajorResource::collection($majors),"Majors Fetched Successfully",200);
     }
