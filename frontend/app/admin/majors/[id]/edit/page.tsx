@@ -1,10 +1,12 @@
 "use client";
 
+import { use } from "react";
+import { useRouter } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import { use } from "react";
 import MajorForm from "@/components/admin/majors/MajorForm";
-import { mockMajors } from "@/lib/mocks/majors";
+import { getMajor } from "@/services/majorsService";
 
 interface EditMajorPageProps {
   params: Promise<{ id: string }>;
@@ -12,11 +14,25 @@ interface EditMajorPageProps {
 
 export default function EditMajorPage({ params }: EditMajorPageProps) {
   const { id } = use(params);
+  const majorId = Number(id);
+  const router = useRouter();
 
-  // TI-43: replace with useQuery({ queryFn: () => api.get(`/admin/majors/${id}`) })
-  const major = mockMajors.find((m) => String(m.id) === id);
+  const { data: major, isLoading, isError } = useQuery({
+    queryKey: ["major", majorId],
+    queryFn: () => getMajor(majorId),
+    enabled: !isNaN(majorId),
+  });
 
-  if (!major) {
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <div className="h-8 w-48 animate-pulse rounded bg-gray-200" />
+        <div className="h-96 animate-pulse rounded-xl bg-gray-200" />
+      </div>
+    );
+  }
+
+  if (isError || !major) {
     return (
       <div className="rounded-xl border border-gray-200 bg-white p-12 text-center">
         <p className="text-gray-500">Major not found.</p>
@@ -34,7 +50,16 @@ export default function EditMajorPage({ params }: EditMajorPageProps) {
     category_id: major.category_id,
     difficulty_level: major.difficulty_level,
     duration_years: major.duration_years,
+    salary_min: major.salary_min,
+    salary_max: major.salary_max,
     is_featured: major.is_featured,
+    overview: major.overview ?? "",
+    description: major.description ?? "",
+    points: major.points ?? [],
+    skills: major.skills?.map((s) => ({ skill_id: s.id })) ?? [],
+    jobs: major.jobs ?? [],
+    companies: major.companies ?? [],
+    faqs: major.faqs ?? [],
   };
 
   return (
@@ -52,7 +77,12 @@ export default function EditMajorPage({ params }: EditMajorPageProps) {
         </div>
       </div>
 
-      <MajorForm mode="edit" initialData={initialData} />
+      <MajorForm
+        mode="edit"
+        initialData={initialData}
+        majorId={majorId}
+        onSuccess={() => router.push("/admin/majors")}
+      />
     </div>
   );
 }
