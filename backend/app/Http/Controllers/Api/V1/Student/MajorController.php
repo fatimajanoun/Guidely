@@ -19,8 +19,7 @@ class MajorController extends Controller
         $favorites = $request->user()
             ->favoriteMajors()
             ->with(['category', 'skills'])
-            ->latest('user_favorites.created_at')
-            ->get();
+            ->latest('user_favorites.created_at')->get();
 
         return $this->success(
             MajorResource::collection($favorites),
