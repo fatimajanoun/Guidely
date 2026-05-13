@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Question;
+use App\Models\QuestionOption;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
@@ -14,10 +15,10 @@ it('authenticated student can get test questions', function () {
     Sanctum::actingAs($student);
 
     $question = Question::create([
-    'text_en' => 'What motivates you most?',
-    'text_ar' => 'ما الذي يحفزك أكثر؟',
-    'section' => 'interest',
-    'order' => 1,
+        'text_en' => 'What motivates you most?',
+        'text_ar' => 'ما الذي يحفزك أكثر؟',
+        'section' => 'interest',
+        'order' => 1,
     ]);
 
     $question->options()->create([
@@ -51,4 +52,55 @@ it('authenticated student can get test questions', function () {
             ],
             'message'
         ]);
+});
+
+it('fails validation when answers are missing', function () {
+
+    $user = User::factory()->student()->create();
+
+    Sanctum::actingAs($user, [], 'sanctum');
+
+    $response = $this->postJson('/api/v1/test/submit', []);
+
+    $response->assertStatus(422)
+        ->assertJsonValidationErrors(['answers']);
+});
+
+it('submits quiz successfully', function () {
+
+    $user = User::factory()->student()->create();
+
+    Sanctum::actingAs($user);
+
+    $question = Question::create([
+        'text_en' => 'What do you enjoy?',
+        'text_ar' => 'ماذا تحب؟',
+        'section' => 'interest',
+        'order' => 1,
+    ]);
+
+    $option = QuestionOption::create([
+        'question_id' => $question->id,
+        'text_en' => 'Programming',
+        'text_ar' => 'البرمجة',
+        'weights' => [1 => 5],
+    ]);
+
+    $response = $this->postJson('/api/v1/test/submit', [
+        'answers' => [$option->id],
+    ]);
+
+    $response->assertStatus(200)
+    ->assertJson([
+        'message' => 'Test Submitted Successfully',
+    ])
+    ->assertJsonStructure([
+        'data' => [
+            'recommendations',
+        ],
+    ]);
+
+    $this->assertDatabaseHas('quiz_results', [
+        'user_id' => $user->id,
+    ]);
 });
