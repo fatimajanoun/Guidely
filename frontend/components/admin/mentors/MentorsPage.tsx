@@ -40,7 +40,7 @@ export default function MentorsPage() {
       setPage(res.meta?.current_page ?? pageNum);
       setHasNext(!!res.links?.next);
     } catch {
-      toast.error("Failed to fetch mentors ❌");
+      toast.error("Failed to fetch mentors.");
       setData([]);
       setOriginalData([]);
     } finally {
@@ -62,11 +62,11 @@ export default function MentorsPage() {
 
       const users = Array.isArray(res.data) ? res.data : [];
 
-      setData(users.filter((u: User) => u.role === "mentor"));
+      setData(users);
       setHasNext(false);
       setPage(1);
     } catch {
-      toast.error("Failed to fetch results ❌");
+      toast.error("Failed to fetch results.");
       setData([]);
     } finally {
       setPageLoading(false);

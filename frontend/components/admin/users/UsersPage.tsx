@@ -35,12 +35,12 @@ export default function UsersPage() {
       const users = Array.isArray(res.data) ? res.data : [];
 
       setData(users);
-      setOriginalData(users); // 🔥 نحفظ النسخة الأصلية
+      setOriginalData(users);
 
       setPage(res.meta?.current_page ?? pageNum);
       setHasNext(!!res.links?.next);
     } catch {
-      toast.error("Failed to fetch students ❌");
+      toast.error("Failed to fetch students.");
       setData([]);
       setOriginalData([]);
     } finally {
@@ -66,7 +66,7 @@ export default function UsersPage() {
       setHasNext(false);
       setPage(1);
     } catch {
-      toast.error("Failed to fetch results ❌");
+      toast.error("Failed to fetch results.");
       setData([]);
     } finally {
       setPageLoading(false);
@@ -84,14 +84,12 @@ export default function UsersPage() {
     }
 
     searchTimeout.current = setTimeout(() => {
-      // 🚨 أقل من 2 حرف → رجّع البيانات الأصلية بدون API
       if (trimmed.length < 2) {
         lastSearch.current = "";
-        setData(originalData); // 🔥 مهم جدًا: بدون fetch
+        setData(originalData);
         return;
       }
 
-      // 🚀 منع تكرار نفس البحث
       if (trimmed === lastSearch.current) return;
 
       lastSearch.current = trimmed;
@@ -169,7 +167,7 @@ export default function UsersPage() {
               onClick={() => {
                 setSearch("");
                 lastSearch.current = "";
-                setData(originalData); // 🔥 يرجع مباشرة بدون API
+                setData(originalData);
               }}
               className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
             >

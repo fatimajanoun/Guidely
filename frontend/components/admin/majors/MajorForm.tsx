@@ -1,9 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
 import { majorFormSchema, type MajorFormData } from "@/lib/validations/major";
+import { createMajor, updateMajor } from "@/services/majorsService";
 import BasicInfoSection from "./sections/BasicInfoSection";
 import OverviewSection from "./sections/OverviewSection";
 import ProsConsSection from "./sections/ProsConsSection";
@@ -52,9 +55,12 @@ const DEFAULT_VALUES: Partial<MajorFormData> = {
 interface MajorFormProps {
   initialData?: Partial<MajorFormData>;
   mode: "create" | "edit";
+  majorId?: number;
+  onSuccess?: () => void;
 }
 
-export default function MajorForm({ initialData, mode }: MajorFormProps) {
+export default function MajorForm({ initialData, mode, majorId, onSuccess }: MajorFormProps) {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState<TabId>("basic");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitAction, setSubmitAction] = useState<"draft" | "publish" | null>(null);
@@ -71,9 +77,21 @@ export default function MajorForm({ initialData, mode }: MajorFormProps) {
     setIsSubmitting(true);
     setSubmitAction(action);
     try {
-      // TI-43: replace with api.post('/admin/majors', { ...data, status: action })
-      await new Promise((r) => setTimeout(r, 800));
-      console.log(`[TI-43] ${mode} major as ${action}:`, data);
+      const payload = { ...data, status: action };
+      if (mode === "create") {
+        await createMajor(payload as Record<string, unknown>);
+        toast.success("Major created successfully");
+      } else if (majorId) {
+        await updateMajor(majorId, payload as Record<string, unknown>);
+        toast.success("Major updated successfully");
+      }
+      if (onSuccess) {
+        onSuccess();
+      } else {
+        router.push("/admin/majors");
+      }
+    } catch {
+      toast.error("Failed to save major. Please try again.");
     } finally {
       setIsSubmitting(false);
       setSubmitAction(null);
