@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1\Student;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Student\MajorDetailsResource;
+use App\Http\Resources\Student\MajorResource;
 use App\Models\Major;
 use App\Traits\ApiResponseTrait;
 use Illuminate\Http\JsonResponse;
@@ -12,6 +13,20 @@ use Illuminate\Http\Request;
 class MajorController extends Controller
 {
     use ApiResponseTrait;
+
+    public function favorites(Request $request): JsonResponse
+    {
+        $favorites = $request->user()
+            ->favoriteMajors()
+            ->with(['category', 'skills'])
+            ->latest('user_favorites.created_at')->get();
+
+        return $this->success(
+            MajorResource::collection($favorites),
+            'Favorite majors retrieved successfully',
+            200
+        );
+    }
 
     public function toggleFavorite(Request $request, Major $major): JsonResponse
     {
@@ -55,7 +70,7 @@ class MajorController extends Controller
 
         return $this->success(new MajorDetailsResource($major),"Major Fetched Successfully",200);
     }
-    
+
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
