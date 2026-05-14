@@ -3,12 +3,14 @@ import api from "@/lib/api";
 /* ── Types ── */
 export interface QuizOption {
   id: number;
-  text: string;
+  text_en: string;
+  text?: string;
 }
 
 export interface QuizQuestion {
   id: number;
-  text: string;
+  text_en: string;
+  text?: string;
   options: QuizOption[];
 }
 
@@ -32,7 +34,7 @@ export interface QuizResult {
 
 // GET /student/test/questions
 export const getQuizQuestions = async (): Promise<QuizQuestion[]> => {
-  const res = await api.get("/v1/student/test/questions");
+  const res = await api.get("/student/test/questions");
   return res.data.data ?? res.data;
 };
 
@@ -40,6 +42,6 @@ export const getQuizQuestions = async (): Promise<QuizQuestion[]> => {
 export const submitQuiz = async (
   answers: QuizAnswer[],
 ): Promise<QuizResult> => {
-  const res = await api.post("/v1/student/test/submit", { answers });
+  const res = await api.post("/student/test/submit", { answers });
   return res.data.data ?? res.data;
 };

@@ -130,7 +130,7 @@ export default function QuizPage() {
       <div className="max-w-2xl mx-auto px-6 py-10">
         <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-8">
           <h2 className="text-xl font-semibold text-gray-900 mb-6">
-            {currentQuestion?.text}
+            {currentQuestion?.text_en ?? currentQuestion?.text}
           </h2>
 
           {/* Options */}
@@ -162,7 +162,7 @@ export default function QuizPage() {
                         <CheckCircle2 className="h-3.5 w-3.5 text-white" />
                       )}
                     </span>
-                    {option.text}
+                    {option.text_en ?? option.text}
                   </div>
                 </button>
               );
