@@ -12,7 +12,16 @@ export const getMajors = async (
   params: MajorListParams = {}
 ): Promise<Paginated<MajorListItem>> => {
   const res = await api.get("/admin/majors", { params });
-  return res.data;
+  const { items, meta } = res.data.data;
+  return {
+    data: items,
+    meta: {
+      current_page: meta.page,
+      per_page: meta.per_page,
+      total: meta.total,
+      last_page: Math.ceil(meta.total / meta.per_page),
+    },
+  };
 };
 
 // GET /admin/majors/{id}

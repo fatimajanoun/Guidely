@@ -1,16 +1,13 @@
-﻿"use client";
+"use client";
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useQueries } from "@tanstack/react-query";
 import { BookOpen, Building2, Users, ClipboardList } from "lucide-react";
 import { useAuth } from "@/app/contexts/AuthContext";
-
-const stats = [
-  { label: "Majors",       value: "—", icon: BookOpen },
-  { label: "Universities", value: "—", icon: Building2 },
-  { label: "Users",        value: "—", icon: Users },
-  { label: "Test Questions", value: "—", icon: ClipboardList },
-];
+import { getMajors } from "@/services/majorsService";
+import { universityService } from "@/services/universityService";
+import { userService } from "@/services/userService";
 
 export default function AdminOverviewPage() {
   const { user, isAuthenticated, loading } = useAuth();
@@ -18,13 +15,10 @@ export default function AdminOverviewPage() {
 
   useEffect(() => {
     if (!loading) {
-      // Check if user is authenticated
       if (!isAuthenticated || !user) {
         router.push("/login?redirect=/admin");
         return;
       }
-
-      // Check if user is admin
       if (user.role !== "admin") {
         router.push("/");
         return;
@@ -32,7 +26,49 @@ export default function AdminOverviewPage() {
     }
   }, [isAuthenticated, user, loading, router]);
 
-  // Show loading state while checking auth
+  const [majorsQuery, unisQuery, usersQuery] = useQueries({
+    queries: [
+      {
+        queryKey: ["admin-overview-majors"],
+        queryFn: () => getMajors({ per_page: 1, page: 1 }),
+        enabled: isAuthenticated && user?.role === "admin",
+      },
+      {
+        queryKey: ["admin-overview-unis"],
+        queryFn: () => universityService.getAll(1),
+        enabled: isAuthenticated && user?.role === "admin",
+      },
+      {
+        queryKey: ["admin-overview-users"],
+        queryFn: () => userService.getAll(1),
+        enabled: isAuthenticated && user?.role === "admin",
+      },
+    ],
+  });
+
+  const statsConfig = [
+    {
+      label: "Majors",
+      icon: BookOpen,
+      value: majorsQuery.isLoading ? null : (majorsQuery.data?.meta?.total ?? "—"),
+    },
+    {
+      label: "Universities",
+      icon: Building2,
+      value: unisQuery.isLoading ? null : (unisQuery.data?.meta?.total ?? "—"),
+    },
+    {
+      label: "Users",
+      icon: Users,
+      value: usersQuery.isLoading ? null : (usersQuery.data?.meta?.total ?? "—"),
+    },
+    {
+      label: "Test Questions",
+      icon: ClipboardList,
+      value: "—",
+    },
+  ];
+
   if (loading) {
     return (
       <div className="space-y-6">
@@ -46,10 +82,7 @@ export default function AdminOverviewPage() {
     );
   }
 
-  // Don''t render if not authorized (will redirect above)
-  if (!isAuthenticated || !user || user.role !== "admin") {
-    return null;
-  }
+  if (!isAuthenticated || !user || user.role !== "admin") return null;
 
   return (
     <div className="space-y-6">
@@ -59,16 +92,17 @@ export default function AdminOverviewPage() {
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {stats.map(({ label, value, icon: Icon }) => (
-          <div
-            key={label}
-            className="rounded-2xl border border-gray-100 bg-white p-5 shadow-card"
-          >
+        {statsConfig.map(({ label, value, icon: Icon }) => (
+          <div key={label} className="rounded-2xl border border-gray-100 bg-white p-5 shadow-card">
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium text-gray-500">{label}</span>
               <Icon className="h-4 w-4 text-brand-600" />
             </div>
-            <p className="mt-3 text-2xl font-bold text-gray-900">{value}</p>
+            {value === null ? (
+              <div className="mt-3 h-8 w-16 rounded bg-gray-100 animate-pulse" />
+            ) : (
+              <p className="mt-3 text-2xl font-bold text-gray-900">{value}</p>
+            )}
           </div>
         ))}
       </div>

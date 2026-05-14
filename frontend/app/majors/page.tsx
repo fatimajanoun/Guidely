@@ -9,6 +9,7 @@ import {
   useRef,
 } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
 import {
   Search,
   LayoutGrid,
@@ -21,7 +22,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { mockMajors, mockCategories } from "@/lib/mocks/majors";
+import { getPublicMajors } from "@/services/studentService";
 import { useDebounce } from "@/hooks/useDebounce";
 import MajorCard from "@/components/majors/MajorCard";
 import MajorsFilterSidebar, {
@@ -180,8 +181,22 @@ function MajorsContent() {
     setPage(1);
   };
 
+  const { data: majorsData, isLoading } = useQuery({
+    queryKey: ["public-majors", page],
+    queryFn: () => getPublicMajors({ per_page: PAGE_SIZE, page }),
+  });
+
+  const allMajors = useMemo(() => {
+    if (!majorsData) return [];
+    return [
+      ...majorsData.recommended,
+      ...majorsData.featured,
+      ...majorsData.others.data,
+    ];
+  }, [majorsData]);
+
   const filtered = useMemo(() => {
-    return mockMajors.filter((m) => {
+    return allMajors.filter((m) => {
       if (debouncedSearch) {
         const q = debouncedSearch.toLowerCase();
         if (
@@ -206,11 +221,10 @@ function MajorsContent() {
       if (filters.featuredOnly && !m.is_featured) return false;
       return true;
     });
-  }, [debouncedSearch, filters]);
+  }, [allMajors, debouncedSearch, filters]);
 
-  const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
+  const totalPages = majorsData?.others.meta.last_page ?? 1;
 
-  // Clamp page if out of range
   useEffect(() => {
     if (page > totalPages && totalPages > 0) setPage(1);
   }, [page, totalPages]);
@@ -225,7 +239,12 @@ function MajorsContent() {
     router.replace(`/majors?${params.toString()}`, { scroll: false });
   }, [debouncedSearch, filters, page, router]);
 
-  const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  // Normalize category.name → category.name_en for MajorCard compatibility
+  const normalizedFiltered = filtered.map((m) => ({
+    ...m,
+    category: m.category ? { ...m.category, name_en: m.category.name_en ?? m.category.name } : null,
+  }));
+
   const filterCount = activeFilterCount(filters);
 
   const handlePageChange = (newPage: number) => {
@@ -251,8 +270,7 @@ function MajorsContent() {
             Find Your Perfect Major
           </h1>
           <p className="mt-3 text-base text-white/60 sm:text-lg">
-            Browse {mockMajors.length}+ programs across every field — filter by
-            demand, difficulty, and more.
+            Browse programs across every field — filter by demand, difficulty, and more.
           </p>
 
           <div className="mx-auto mt-7 max-w-2xl">
@@ -283,20 +301,15 @@ function MajorsContent() {
 
           <div className="mt-6 flex flex-wrap items-center justify-center gap-6">
             {[
-              { label: "Majors", value: mockMajors.length },
-              { label: "Categories", value: mockCategories.length },
+              { label: "Majors", value: majorsData?.others.meta.total ?? "—" },
               {
                 label: "High-demand fields",
-                value: mockMajors.filter(
-                  (m) =>
-                    m.local_demand === "very_high" || m.local_demand === "high",
-                ).length,
+                value: allMajors.filter(
+                  (m) => m.local_demand === "very_high" || m.local_demand === "high",
+                ).length || "—",
               },
             ].map((s) => (
-              <div
-                key={s.label}
-                className="flex items-center gap-2 text-white/70"
-              >
+              <div key={s.label} className="flex items-center gap-2 text-white/70">
                 <span className="text-xl font-bold text-white">{s.value}</span>
                 <span className="text-sm">{s.label}</span>
               </div>
@@ -481,7 +494,9 @@ function MajorsContent() {
               </div>
             </div>
 
-            {filtered.length === 0 ? (
+            {isLoading ? (
+              <SkeletonGrid />
+            ) : normalizedFiltered.length === 0 ? (
               <EmptyState
                 onClear={() => {
                   setFilters(DEFAULT_FILTERS);
@@ -490,14 +505,14 @@ function MajorsContent() {
               />
             ) : view === "grid" ? (
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
-                {paginated.map((m) => (
-                  <MajorCard key={m.id} major={m} view="grid" />
+                {normalizedFiltered.map((m) => (
+                  <MajorCard key={m.slug} major={m as never} view="grid" />
                 ))}
               </div>
             ) : (
               <div className="flex flex-col gap-2.5">
-                {paginated.map((m) => (
-                  <MajorCard key={m.id} major={m} view="list" />
+                {normalizedFiltered.map((m) => (
+                  <MajorCard key={m.slug} major={m as never} view="list" />
                 ))}
               </div>
             )}
