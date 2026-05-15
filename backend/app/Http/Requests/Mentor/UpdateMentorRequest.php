@@ -18,17 +18,16 @@ class UpdateMentorRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'major_slug' => ['sometimes', 'nullable', 'string', 'exists:majors,slug'],
-            'is_accepting_students' => ['sometimes', 'nullable', 'boolean'],
-            'bio' => ['sometimes', 'nullable', 'string', 'max:5000'],
-            'years_experience' => ['sometimes', 'nullable', 'integer', 'min:0', 'max:80'],
-            'degree' => ['sometimes', 'nullable', 'string', 'max:255'],
-            'university_name' => ['sometimes', 'nullable', 'string', 'max:255'],
-            'graduation_year' => ['sometimes', 'nullable', 'integer', 'min:1900', 'max:' . ((int) date('Y') + 10)],
-            'languages' => ['sometimes', 'nullable', 'array'],
-            'languages.*' => ['string', 'max:50'],
+            'major_slug' => ['required', 'string', 'exists:majors,slug'],
+            'is_accepting_students' => ['required', 'boolean'],
+            'bio' => ['required', 'string', 'max:5000'],
+            'years_experience' => ['required', 'integer', 'min:0', 'max:80'],
+            'degree' => ['required', 'string', 'max:255'],
+            'university_name' => ['required', 'string', 'max:255'],
+            'graduation_year' => ['required', 'integer', 'min:1900', 'max:' . ((int) date('Y') + 10)],
+            'languages' => ['required', 'array', 'min:1'],
+            'languages.*' => ['required', 'string', 'max:50'],
             'linkedin_url' => ['sometimes', 'nullable', 'url', 'max:255'],
-            'twitter_url' => ['sometimes', 'nullable', 'url', 'max:255'],
             'website_url' => ['sometimes', 'nullable', 'url', 'max:255'],
         ];
     }

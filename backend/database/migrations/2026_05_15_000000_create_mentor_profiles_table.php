@@ -14,17 +14,16 @@ return new class extends Migration
         Schema::create('mentor_profiles', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->unique()->constrained()->cascadeOnDelete();
-            $table->foreignId('major_id')->nullable()->constrained()->cascadeOnDelete();
+            $table->foreignId('major_id')->constrained()->cascadeOnDelete();
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
-            $table->boolean('is_accepting_students')->nullable()->default(true);
-            $table->text('bio')->nullable();
-            $table->unsignedInteger('years_experience')->nullable();
-            $table->string('degree')->nullable();
-            $table->string('university_name')->nullable();
-            $table->year('graduation_year')->nullable();
-            $table->json('languages')->nullable();
+            $table->boolean('is_accepting_students')->default(true);
+            $table->text('bio');
+            $table->unsignedInteger('years_experience');
+            $table->string('degree');
+            $table->string('university_name');
+            $table->year('graduation_year');
+            $table->json('languages');
             $table->string('linkedin_url')->nullable();
-            $table->string('twitter_url')->nullable();
             $table->string('website_url')->nullable();
             $table->timestamps();
         });

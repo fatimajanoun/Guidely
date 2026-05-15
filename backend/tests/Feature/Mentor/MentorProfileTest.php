@@ -46,7 +46,6 @@ it('updates the authenticated mentors profile', function () {
         'graduation_year' => 2020,
         'languages' => ['English', 'Arabic'],
         'linkedin_url' => 'https://www.linkedin.com/in/testmentor',
-        'twitter_url' => 'https://twitter.com/testmentor',
         'website_url' => 'https://mentor.example.com',
     ]);
 
@@ -54,12 +53,13 @@ it('updates the authenticated mentors profile', function () {
         ->assertOk()
         ->assertJsonPath('message', 'Mentor profile updated successfully')
         ->assertJsonPath('data.id', $profile->id)
-        ->assertJsonPath('data.major_id', $newMajor->id)
+        ->assertJsonPath('data.major_slug', $newMajor->slug)
         ->assertJsonPath('data.is_accepting_students', false)
         ->assertJsonPath('data.bio', 'Updated mentor bio')
         ->assertJsonPath('data.years_experience', 6)
         ->assertJsonPath('data.languages.0', 'English')
         ->assertJsonPath('data.major.slug', $newMajor->slug)
+        ->assertJsonMissingPath('data.major_id')
         ->assertJsonMissingPath('data.major.id');
 
     $this->assertDatabaseHas('mentor_profiles', [
@@ -80,7 +80,14 @@ it('does not allow mentor to update profile status', function () {
     Sanctum::actingAs($mentor);
 
     $this->patchJson('/api/v1/mentor/profile', [
+        'major_slug' => $profile->major->slug,
         'bio' => 'Updated bio',
+        'is_accepting_students' => true,
+        'years_experience' => 4,
+        'degree' => 'Bachelor',
+        'university_name' => 'Lebanese University',
+        'graduation_year' => 2020,
+        'languages' => ['English'],
         'status' => 'approved',
     ])
         ->assertOk()
@@ -89,7 +96,7 @@ it('does not allow mentor to update profile status', function () {
     expect($profile->fresh()->status)->toBe('pending');
 });
 
-it('allows nullable mentor profile fields', function () {
+it('allows optional mentor profile links to be nullable', function () {
     $mentor = User::factory()->mentor()->create();
     $profile = MentorProfile::factory()->for($mentor)->create([
         'is_accepting_students' => true,
@@ -100,43 +107,30 @@ it('allows nullable mentor profile fields', function () {
         'graduation_year' => 2020,
         'languages' => ['English'],
         'linkedin_url' => 'https://www.linkedin.com/in/oldmentor',
-        'twitter_url' => 'https://twitter.com/oldmentor',
         'website_url' => 'https://oldmentor.example.com',
     ]);
 
     Sanctum::actingAs($mentor);
 
     $this->patchJson('/api/v1/mentor/profile', [
-        'major_slug' => null,
-        'is_accepting_students' => null,
-        'bio' => null,
-        'years_experience' => null,
-        'degree' => null,
-        'university_name' => null,
-        'graduation_year' => null,
-        'languages' => null,
+        'major_slug' => $profile->major->slug,
+        'is_accepting_students' => true,
+        'bio' => 'Updated bio',
+        'years_experience' => 5,
+        'degree' => 'Master',
+        'university_name' => 'Updated University',
+        'graduation_year' => 2021,
+        'languages' => ['English', 'Arabic'],
         'linkedin_url' => null,
-        'twitter_url' => null,
         'website_url' => null,
     ])
         ->assertOk()
-        ->assertJsonPath('data.major_id', null)
-        ->assertJsonPath('data.is_accepting_students', null)
-        ->assertJsonPath('data.bio', null)
-        ->assertJsonPath('data.major', null);
+        ->assertJsonPath('data.linkedin_url', null)
+        ->assertJsonPath('data.website_url', null);
 
     $this->assertDatabaseHas('mentor_profiles', [
         'id' => $profile->id,
-        'major_id' => null,
-        'is_accepting_students' => null,
-        'bio' => null,
-        'years_experience' => null,
-        'degree' => null,
-        'university_name' => null,
-        'graduation_year' => null,
-        'languages' => null,
         'linkedin_url' => null,
-        'twitter_url' => null,
         'website_url' => null,
     ]);
 });
@@ -146,8 +140,17 @@ it('returns not found when mentor has no profile', function () {
 
     Sanctum::actingAs($mentor);
 
+    $major = Major::factory()->create();
+
     $this->patchJson('/api/v1/mentor/profile', [
         'bio' => 'Updated bio',
+        'major_slug' => $major->slug,
+        'is_accepting_students' => true,
+        'years_experience' => 4,
+        'degree' => 'Bachelor',
+        'university_name' => 'Lebanese University',
+        'graduation_year' => 2020,
+        'languages' => ['English'],
     ])
         ->assertNotFound()
         ->assertJsonPath('message', 'Mentor profile not found');
@@ -160,18 +163,24 @@ it('validates mentor profile update payload', function () {
     Sanctum::actingAs($mentor);
 
     $this->patchJson('/api/v1/mentor/profile', [
-        'major_slug' => 'missing-major',
-        'is_accepting_students' => 'not-boolean',
+        'major_slug' => null,
+        'is_accepting_students' => null,
+        'bio' => null,
         'years_experience' => -1,
+        'degree' => null,
+        'university_name' => null,
         'graduation_year' => 1800,
-        'languages' => 'English',
+        'languages' => [],
         'website_url' => 'not-a-url',
     ])
         ->assertUnprocessable()
         ->assertJsonValidationErrors([
             'major_slug',
             'is_accepting_students',
+            'bio',
             'years_experience',
+            'degree',
+            'university_name',
             'graduation_year',
             'languages',
             'website_url',
