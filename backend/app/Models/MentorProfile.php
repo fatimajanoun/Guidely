@@ -19,7 +19,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
     'graduation_year',
     'languages',
     'linkedin_url',
-    'twitter_url',
     'website_url',
 ])]
 class MentorProfile extends Model

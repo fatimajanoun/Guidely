@@ -36,7 +36,6 @@ class MentorProfileFactory extends Factory
             'graduation_year' => fake()->numberBetween(2000, (int) date('Y')),
             'languages' => array_values($languages),
             'linkedin_url' => 'https://www.linkedin.com/in/'.fake()->userName(),
-            'twitter_url' => 'https://twitter.com/'.fake()->userName(),
             'website_url' => fake()->url(),
         ];
     }
