@@ -20,7 +20,7 @@ use Illuminate\Database\Eloquent\Model;
 class MentorSession extends Model
 {
     use HasFactory;
-    
+
     protected $casts = [
         'is_active' => 'boolean'
     ];
@@ -28,5 +28,10 @@ class MentorSession extends Model
     public function mentor()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function availabilities()
+    {
+        return $this->hasMany(SessionAvailability::class);
     }
 }
