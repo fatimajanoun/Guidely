@@ -52,4 +52,9 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasOne(MentorProfile::class);
     }
+
+    public function mentorSessions()
+    {
+        return $this->hasMany(MentorSession::class);
+    }
 }
