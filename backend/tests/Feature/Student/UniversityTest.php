@@ -13,7 +13,7 @@ it('returns paginated universities publicly with display fields', function () {
         'location' => 'Tripoli',
     ]);
 
-    $alpha = University::factory()->create([
+    University::factory()->create([
         'name_en' => 'Alpha University',
         'name_ar' => 'Alpha AR',
         'slug' => 'alpha-university',
@@ -24,7 +24,6 @@ it('returns paginated universities publicly with display fields', function () {
         'description_en' => 'Alpha description.',
         'description_ar' => 'Alpha Arabic description.',
         'founded_year' => 1900,
-        'accreditation' => 'NECHE',
     ]);
 
     $response = $this->getJson('/api/v1/universities');
@@ -32,7 +31,6 @@ it('returns paginated universities publicly with display fields', function () {
     $response
         ->assertOk()
         ->assertJsonPath('message', 'Universities retrieved successfully')
-        ->assertJsonPath('data.0.id', $alpha->id)
         ->assertJsonPath('data.0.name_en', 'Alpha University')
         ->assertJsonPath('data.0.slug', 'alpha-university')
         ->assertJsonPath('data.0.type', 'public')
@@ -41,7 +39,6 @@ it('returns paginated universities publicly with display fields', function () {
         ->assertJsonStructure([
             'data' => [
                 '*' => [
-                    'id',
                     'name_en',
                     'name_ar',
                     'slug',
@@ -52,13 +49,14 @@ it('returns paginated universities publicly with display fields', function () {
                     'description_en',
                     'description_ar',
                     'founded_year',
-                    'accreditation',
                 ],
             ],
             'links',
             'message',
             'meta',
         ])
+        ->assertJsonMissingPath('data.0.id')
+        ->assertJsonMissingPath('data.0.accreditation')
         ->assertJsonMissingPath('data.0.created_at')
         ->assertJsonMissingPath('data.0.updated_at');
 });

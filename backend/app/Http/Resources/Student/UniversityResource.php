@@ -15,7 +15,6 @@ class UniversityResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id' => $this->id,
             'name_en' => $this->name_en,
             'name_ar' => $this->name_ar,
             'slug' => $this->slug,
@@ -26,7 +25,6 @@ class UniversityResource extends JsonResource
             'description_en' => $this->description_en,
             'description_ar' => $this->description_ar,
             'founded_year' => $this->founded_year,
-            'accreditation' => $this->accreditation,
         ];
     }
 }

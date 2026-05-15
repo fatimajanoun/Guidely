@@ -20,7 +20,6 @@ class UniversityController extends Controller
 
         $universities = University::query()
             ->select([
-                'id',
                 'name_en',
                 'name_ar',
                 'slug',
@@ -31,7 +30,6 @@ class UniversityController extends Controller
                 'description_en',
                 'description_ar',
                 'founded_year',
-                'accreditation',
             ])
             ->when(
                 $request->filled('search'),
@@ -51,7 +49,7 @@ class UniversityController extends Controller
                 fn ($query) => $query->where('location', $filters['location'])
             )
             ->orderBy('name_en')
-            ->orderBy('id')
+            ->orderBy('slug')
             ->paginate($perPage)
             ->withQueryString();
 
