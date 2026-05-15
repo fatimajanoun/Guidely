@@ -5,7 +5,7 @@ namespace App\Http\Requests\Mentor;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateMentorProfileRequest extends FormRequest
+class UpdateMentorRequest extends FormRequest
 {
     public function authorize(): bool
     {

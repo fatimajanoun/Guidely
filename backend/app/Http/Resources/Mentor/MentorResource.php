@@ -5,7 +5,7 @@ namespace App\Http\Resources\Mentor;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class MentorProfileResource extends JsonResource
+class MentorResource extends JsonResource
 {
     /**
      * Transform the resource into an array.

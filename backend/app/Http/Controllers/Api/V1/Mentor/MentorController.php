@@ -3,16 +3,16 @@
 namespace App\Http\Controllers\Api\V1\Mentor;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Mentor\UpdateMentorProfileRequest;
-use App\Http\Resources\Mentor\MentorProfileResource;
+use App\Http\Requests\Mentor\UpdateMentorRequest;
+use App\Http\Resources\Mentor\MentorResource;
 use App\Traits\ApiResponseTrait;
 use Illuminate\Http\JsonResponse;
 
-class MentorProfileController extends Controller
+class MentorController extends Controller
 {
     use ApiResponseTrait;
 
-    public function update(UpdateMentorProfileRequest $request): JsonResponse
+    public function update(UpdateMentorRequest $request): JsonResponse
     {
         $profile = $request->user()
             ->mentorProfile()
@@ -26,7 +26,7 @@ class MentorProfileController extends Controller
         $profile->update($request->validated());
 
         return $this->success(
-            new MentorProfileResource($profile->fresh()->load('major')),
+            new MentorResource($profile->fresh()->load('major')),
             'Mentor profile updated successfully',
             200
         );
