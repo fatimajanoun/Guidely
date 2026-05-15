@@ -9,11 +9,18 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 #[Fillable([
     'user_id',
-    'session_duration_minutes',
-    'session_price',
-    'currency',
-    'email',
+    'major_id',
+    'status',
     'is_accepting_students',
+    'bio',
+    'years_experience',
+    'degree',
+    'university_name',
+    'graduation_year',
+    'languages',
+    'linkedin_url',
+    'twitter_url',
+    'website_url',
 ])]
 class MentorProfile extends Model
 {
@@ -22,14 +29,22 @@ class MentorProfile extends Model
     protected function casts(): array
     {
         return [
-            'session_duration_minutes' => 'integer',
-            'session_price' => 'decimal:2',
+            'user_id' => 'integer',
+            'major_id' => 'integer',
             'is_accepting_students' => 'boolean',
+            'years_experience' => 'integer',
+            'graduation_year' => 'integer',
+            'languages' => 'array',
         ];
     }
 
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function major(): BelongsTo
+    {
+        return $this->belongsTo(Major::class);
     }
 }
