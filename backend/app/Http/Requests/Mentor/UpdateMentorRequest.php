@@ -18,8 +18,8 @@ class UpdateMentorRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'major_id' => ['sometimes', 'integer', 'exists:majors,id'],
-            'is_accepting_students' => ['sometimes', 'boolean'],
+            'major_id' => ['sometimes', 'nullable', 'integer', 'exists:majors,id'],
+            'is_accepting_students' => ['sometimes', 'nullable', 'boolean'],
             'bio' => ['sometimes', 'nullable', 'string', 'max:5000'],
             'years_experience' => ['sometimes', 'nullable', 'integer', 'min:0', 'max:80'],
             'degree' => ['sometimes', 'nullable', 'string', 'max:255'],
