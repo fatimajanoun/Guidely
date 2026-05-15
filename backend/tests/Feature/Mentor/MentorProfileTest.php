@@ -37,7 +37,7 @@ it('updates the authenticated mentors profile', function () {
     Sanctum::actingAs($mentor);
 
     $response = $this->patchJson('/api/v1/mentor/profile', [
-        'major_id' => $newMajor->id,
+        'major_slug' => $newMajor->slug,
         'is_accepting_students' => false,
         'bio' => 'Updated mentor bio',
         'years_experience' => 6,
@@ -59,7 +59,8 @@ it('updates the authenticated mentors profile', function () {
         ->assertJsonPath('data.bio', 'Updated mentor bio')
         ->assertJsonPath('data.years_experience', 6)
         ->assertJsonPath('data.languages.0', 'English')
-        ->assertJsonPath('data.major.id', $newMajor->id);
+        ->assertJsonPath('data.major.slug', $newMajor->slug)
+        ->assertJsonMissingPath('data.major.id');
 
     $this->assertDatabaseHas('mentor_profiles', [
         'id' => $profile->id,
@@ -106,7 +107,7 @@ it('allows nullable mentor profile fields', function () {
     Sanctum::actingAs($mentor);
 
     $this->patchJson('/api/v1/mentor/profile', [
-        'major_id' => null,
+        'major_slug' => null,
         'is_accepting_students' => null,
         'bio' => null,
         'years_experience' => null,
@@ -159,7 +160,7 @@ it('validates mentor profile update payload', function () {
     Sanctum::actingAs($mentor);
 
     $this->patchJson('/api/v1/mentor/profile', [
-        'major_id' => 999999,
+        'major_slug' => 'missing-major',
         'is_accepting_students' => 'not-boolean',
         'years_experience' => -1,
         'graduation_year' => 1800,
@@ -168,7 +169,7 @@ it('validates mentor profile update payload', function () {
     ])
         ->assertUnprocessable()
         ->assertJsonValidationErrors([
-            'major_id',
+            'major_slug',
             'is_accepting_students',
             'years_experience',
             'graduation_year',

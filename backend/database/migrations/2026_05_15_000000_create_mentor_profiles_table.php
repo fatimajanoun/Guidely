@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('mentor_profiles', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->unique()->constrained()->cascadeOnDelete();
-            $table->foreignId('major_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('major_id')->nullable()->constrained()->cascadeOnDelete();
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
-            $table->boolean('is_accepting_students')->default(true);
+            $table->boolean('is_accepting_students')->nullable()->default(true);
             $table->text('bio')->nullable();
             $table->unsignedInteger('years_experience')->nullable();
             $table->string('degree')->nullable();

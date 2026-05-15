@@ -30,7 +30,6 @@ class MentorResource extends JsonResource
             'twitter_url' => $this->twitter_url,
             'website_url' => $this->website_url,
             'major' => $this->whenLoaded('major', fn () => $this->major ? [
-                'id' => $this->major->id,
                 'name_en' => $this->major->name_en,
                 'name_ar' => $this->major->name_ar,
                 'slug' => $this->major->slug,
