@@ -2,9 +2,10 @@
 
 namespace Database\Seeders;
 
+use App\Models\MentorProfile;
+use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use App\Models\User;
 
 class UserSeeder extends Seeder
 {
@@ -15,7 +16,13 @@ class UserSeeder extends Seeder
     {
         User::factory()->count(20)->student()->create();
 
-        User::factory()->count(10)->mentor()->create();
+        $mentors = User::factory()->count(10)->mentor()->create();
+
+        $mentors->each(function (User $mentor): void {
+            MentorProfile::factory()->for($mentor)->create([
+                'email' => $mentor->email,
+            ]);
+        });
 
         User::factory()->admin()->create([
             'name' => 'admin1',
