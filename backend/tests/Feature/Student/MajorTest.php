@@ -47,9 +47,9 @@ it('returns the authenticated users favorite majors', function () {
         ->assertOk()
         ->assertJsonPath('message', 'Favorite majors retrieved successfully')
         ->assertJsonCount(2, 'data')
-        ->assertJsonPath('data.0.id', $secondFavorite->id)
+        ->assertJsonPath('data.0.slug', $secondFavorite->slug)
         ->assertJsonPath('data.0.name_en', 'Medicine')
-        ->assertJsonPath('data.1.id', $firstFavorite->id)
+        ->assertJsonPath('data.1.slug', $firstFavorite->slug)
         ->assertJsonPath('data.1.name_en', 'Computer Science')
         ->assertJsonMissing([
             'name_en' => 'Business Administration',

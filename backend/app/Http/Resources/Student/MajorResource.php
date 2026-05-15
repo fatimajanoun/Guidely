@@ -15,7 +15,6 @@ class MajorResource extends JsonResource
     public function toArray(Request $request): array
     {
          return [
-            'id' => $this->id,
             'name_en' => $this->name_en,
             'name_ar' => $this->name_ar,
             'slug' => $this->slug,
@@ -31,7 +30,6 @@ class MajorResource extends JsonResource
             'cover_image' => $this->cover_image,
 
             'category' => $this->whenLoaded('category', fn () => [
-                'id' => $this->category->id,
                 'name_en' => $this->category->name_en,
                 'name_ar' => $this->category->name_ar,
                 'slug' => $this->category->slug,

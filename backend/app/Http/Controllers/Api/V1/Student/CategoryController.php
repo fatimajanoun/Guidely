@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1\Student;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Student\MajorResource;
 use App\Http\Resources\Student\CategoryResource;
 use App\Models\Category;
 use App\Traits\ApiResponseTrait;
@@ -24,5 +25,12 @@ class CategoryController extends Controller
             'Categories retrieved successfully',
             200
         );
+    }
+
+    public function majors(Category $category)
+    {
+        $majors = $category->majors()->with(['category','skills'])->paginate(15);
+
+        return $this->success(MajorResource::collection($majors),"Majors Fetched Successfully",200);
     }
 }
