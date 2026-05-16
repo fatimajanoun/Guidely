@@ -7,5 +7,5 @@ Route::prefix('mentors')
 ->middleware(['auth:sanctum','role:student'])
     ->controller(MentorController::class)
     ->group(function (): void {
-        Route::get('/{username}', 'show');
+        Route::get('/{user:username}', 'show');
     });

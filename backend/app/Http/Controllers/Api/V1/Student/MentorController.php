@@ -12,37 +12,33 @@ class MentorController extends Controller
 {
     //
     use ApiResponseTrait;
-    public function show(string $username)
+    public function show(User $user)
     {
-        $mentor = User::query()
-            ->where('username', $username)
-            ->whereHas(
-                'mentorProfile',
-                fn($q) =>
-                $q->where('status', 'approved')
-            )
-            ->with([
-                'mentorProfile' => fn($q) =>
-                $q->select([
-                    'status',
-                    'is_accepting_students',
-                    'bio',
-                    'years_experience',
-                    'degree',
-                    'university_name',
-                    'graduation_year',
-                    'languages',
-                    'linkedin_url',
-                    'twitter_url',
-                    'website_url',
-                ])->with('name_en,name_ar,slug'),
-            ])
-            ->select(['name', 'username', 'avatar_url', 'school', 'preferred_language'])
-            ->firstOrFail();
+        $user->load([
+            'mentorProfile' => fn($q) =>
+            $q->select([
+                'user_id',
+                'status',
+                'is_accepting_students',
+                'bio',
+                'years_experience',
+                'degree',
+                'university_name',
+                'graduation_year',
+                'languages',
+                'linkedin_url',
+                'twitter_url',
+                'website_url',
+            ]),
+        ]);
+
+        if (!$user->mentorProfile || $user->mentorProfile->status !== 'approved') {
+            abort(404);
+        }
 
         return $this->success(
-            new PublicMentorResource($mentor),
-            'Mentor retreived successfully',
+            new PublicMentorResource($user),
+            'Mentor retrieved successfully',
             200
         );
     }
