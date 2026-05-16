@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Api\V1\Mentor;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Mentor\StoreMentorSessionRequest;
 use App\Http\Resources\Mentor\SessionResource;
+use App\Models\MentorSession;
 use App\Traits\ApiResponseTrait;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -38,5 +40,21 @@ class SessionController extends Controller
             'Mentor sessions retrieved successfully',
             200
         );
+    }
+
+    public function store(StoreMentorSessionRequest $request): JsonResponse
+    {
+        $session = $request->user()->mentorSessions()->create(
+            $request->validated()
+        );
+
+        $session->load('mentor');
+
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Session created successfully.',
+            'data'    => new SessionResource($session),
+        ], 201);
     }
 }

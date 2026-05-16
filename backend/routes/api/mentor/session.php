@@ -8,4 +8,5 @@ Route::prefix('mentor/sessions')
     ->controller(SessionController::class)
     ->group(function (): void {
         Route::get('/', 'index')->name('api.v1.mentor.sessions.index');
+        Route::post('/','store')->name('api.v1.mentor.sessions.index');
     });
