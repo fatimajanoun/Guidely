@@ -32,12 +32,12 @@ class MentorSession extends Model
         ];
     }
 
-    public function mentor(): BelongsTo
+    public function mentor()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class);
     }
 
-    public function availabilities(): HasMany
+    public function availabilities()
     {
         return $this->hasMany(SessionAvailability::class);
     }
