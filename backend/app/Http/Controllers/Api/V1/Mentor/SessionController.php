@@ -48,8 +48,6 @@ class SessionController extends Controller
             $request->validated()
         );
 
-        $session->load('mentor');
-
         return $this->success(new SessionResource($session),'Session created successfully.',201);
     }
 }
