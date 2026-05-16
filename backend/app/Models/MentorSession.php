@@ -17,7 +17,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
     'max_capacity',
     'price',
     'currency',
-    'is_active',
+    'is_active'
 ])]
 class MentorSession extends Model
 {
