@@ -14,26 +14,14 @@ class MentorController extends Controller
     use ApiResponseTrait;
     public function show(User $user)
     {
-        $user->load([
-            'mentorProfile' => fn($q) =>
-            $q->select([
-                'user_id',
-                'status',
-                'is_accepting_students',
-                'bio',
-                'years_experience',
-                'degree',
-                'university_name',
-                'graduation_year',
-                'languages',
-                'linkedin_url',
-                'twitter_url',
-                'website_url',
-            ]),
-        ]);
+        $user->load('mentorProfile');
 
-        if (!$user->mentorProfile || $user->mentorProfile->status !== 'approved') {
-            abort(404);
+        if (
+            $user->role !== 'mentor' ||
+            !$user->mentorProfile ||
+            $user->mentorProfile->status !== 'approved'
+        ) {
+            return $this->error('Mentor not found.', 404);
         }
 
         return $this->success(
