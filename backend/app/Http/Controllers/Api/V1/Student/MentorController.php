@@ -24,9 +24,6 @@ class MentorController extends Controller
             ->with([
                 'mentorProfile' => fn($q) =>
                 $q->select([
-                    'id',
-                    'user_id',
-                    'major_id',
                     'status',
                     'is_accepting_students',
                     'bio',
@@ -38,9 +35,9 @@ class MentorController extends Controller
                     'linkedin_url',
                     'twitter_url',
                     'website_url',
-                ])->with('major:id,name_en,name_ar,slug'),
+                ])->with('name_en,name_ar,slug'),
             ])
-            ->select(['id', 'name', 'username', 'avatar_url', 'school', 'preferred_language'])
+            ->select(['name', 'username', 'avatar_url', 'school', 'preferred_language'])
             ->firstOrFail();
 
         return $this->success(
