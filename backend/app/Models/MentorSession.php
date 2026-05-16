@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Fillable([
     'title',
@@ -16,14 +18,19 @@ use Illuminate\Database\Eloquent\Model;
     'currency',
     'is_active'
 ])]
-
 class MentorSession extends Model
 {
     use HasFactory;
 
-    protected $casts = [
-        'is_active' => 'boolean'
-    ];
+    protected function casts(): array
+    {
+        return [
+            'duration_minutes' => 'integer',
+            'max_capacity' => 'integer',
+            'price' => 'decimal:2',
+            'is_active' => 'boolean',
+        ];
+    }
 
     public function mentor()
     {
