@@ -50,11 +50,6 @@ class SessionController extends Controller
 
         $session->load('mentor');
 
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Session created successfully.',
-            'data'    => new SessionResource($session),
-        ], 201);
+        return $this->success(new SessionResource($session),'Session created successfully.',201);
     }
 }
