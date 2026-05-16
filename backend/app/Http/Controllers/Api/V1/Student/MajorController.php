@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Api\V1\Student;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Student\CompareMajorsRequest;
 use App\Http\Resources\Student\MajorDetailsResource;
 use App\Http\Resources\Student\MajorResource;
 use App\Models\Major;
+use App\Services\MajorComparisonService;
 use App\Traits\ApiResponseTrait;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -127,5 +129,12 @@ class MajorController extends Controller
             'featured' => $featured,
             'others' => $others,
         ], 'Majors retrieved successfully', 200);
+    }
+
+    public function compare(MajorComparisonService $service,CompareMajorsRequest $request)
+    {
+        $result = $service->compareBySlugs($request->validated(['slugs']));
+
+        return $this->success($result, 'Majors Compared Successfully' ,200);
     }
 }

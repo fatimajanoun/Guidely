@@ -160,3 +160,90 @@ it('ensures featured majors are not duplicated in recommended or others', functi
     // recommended must contain correct major
     expect($recommendedIds)->toContain($recommendedMajor->id);
 });
+
+it('compares two majors successfully and returns structured comparison', function () {
+
+    $user = User::factory()->student()->create();
+    Sanctum::actingAs($user);
+
+    $category = Category::factory()->create();
+
+    $majorA = Major::factory()->create([
+        'name_en' => 'Computer Science',
+        'slug' => 'computer-science',
+        'difficulty_level' => 'hard',
+        'salary_min' => 800,
+        'salary_max' => 5000,
+        'category_id' => $category->id,
+    ]);
+
+    $majorB = Major::factory()->create([
+        'name_en' => 'Cyber Security',
+        'slug' => 'cyber-security',
+        'difficulty_level' => 'very_hard',
+        'salary_min' => 1000,
+        'salary_max' => 7000,
+        'category_id' => $category->id,
+    ]);
+
+    // attach skills
+    $majorA->skills()->attach(
+        \App\Models\Skill::factory()->create(['name' => 'Critical Thinking'])->id
+    );
+
+    $majorB->skills()->attach(
+        \App\Models\Skill::factory()->create(['name' => 'Networking'])->id
+    );
+
+    $response = $this->postJson('/api/v1/majors/compare', [
+        'slugs' => [
+            'computer-science',
+            'cyber-security',
+        ],
+    ]);
+
+    $response->assertOk();
+
+    $response->assertJsonStructure([
+        'data' => [
+            'comparison' => [
+                'A' => [
+                    'slug',
+                    'name',
+                    'difficulty',
+                    'category',
+                    'salary_min',
+                    'salary_max',
+                    'skills',
+                    'universities',
+                ],
+                'B' => [
+                    'slug',
+                    'name',
+                    'difficulty',
+                    'category',
+                    'salary_min',
+                    'salary_max',
+                    'skills',
+                    'universities',
+                ],
+            ],
+            'analysis' => [
+                'skills' => [
+                    'shared',
+                    'only_A',
+                    'only_B',
+                ],
+                'universities',
+                'salary_range',
+                'difficulty_level',
+            ],
+        ],
+    ]);
+
+    expect($response->json('data.comparison.A.slug'))
+        ->toBe('computer-science');
+
+    expect($response->json('data.comparison.B.slug'))
+        ->toBe('cyber-security');
+});

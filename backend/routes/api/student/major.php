@@ -20,4 +20,5 @@ Route::prefix('majors')
             ->name('api.v1.majors.show');
         Route::get('/','index')
             ->name('api.v1.majors.index');
+        Route::post('/compare', 'compare');
     });
