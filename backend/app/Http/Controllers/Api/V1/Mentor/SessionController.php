@@ -18,7 +18,6 @@ class SessionController extends Controller
             ->mentorSessions()
             ->select([
                 'id',
-                'user_id',
                 'title',
                 'description',
                 'type',

@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Fillable([
-    'user_id',
     'title',
     'description',
     'type',
@@ -26,7 +25,6 @@ class MentorSession extends Model
     protected function casts(): array
     {
         return [
-            'user_id' => 'integer',
             'duration_minutes' => 'integer',
             'max_capacity' => 'integer',
             'price' => 'decimal:2',
