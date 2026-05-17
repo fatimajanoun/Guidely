@@ -12,18 +12,28 @@ class UpdateMentorSessionRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        $session = $this->route('session');
+        return $this->user()->id === $session->user_id;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, ValidationRule|array<mixed>|string>
-     */
     public function rules(): array
     {
         return [
-            //
+            'title'            => ['sometimes', 'string', 'max:255'],
+            'description'      => ['sometimes', 'string'],
+            'type'             => ['sometimes', 'in:one-on-one,group'],
+            'duration_minutes' => ['sometimes', 'integer', 'min:15', 'max:480'],
+            'max_capacity'     => ['sometimes', 'integer', 'min:1'],
+            'price'            => ['sometimes', 'numeric', 'min:0'],
+            'currency'         => ['sometimes', 'string', 'size:3'],
+            'is_active'        => ['sometimes', 'boolean'],
         ];
     }
+
+    protected function prepareForValidation(): void
+    {
+        if ($this->input('type') === 'one-on-one') {
+            $this->merge(['max_capacity' => 1]);
+        }
+    }   
 }
