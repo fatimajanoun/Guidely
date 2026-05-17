@@ -50,4 +50,9 @@ class SessionController extends Controller
 
         return $this->success(new SessionResource($session),'Session created successfully.',201);
     }
+
+    public function update()
+    {
+        
+    }
 }
