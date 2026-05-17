@@ -49,6 +49,6 @@ class SessionController extends Controller
         }
 
         $session->update($data);
-        return $this->success(new SessionResource($session->fresh()), "Session updated Successfully", 200);
+        return $this->success(new SessionResource($session->fresh()), "Session updated successfully", 200);
     }
 }
