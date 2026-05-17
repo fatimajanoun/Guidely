@@ -39,7 +39,7 @@ class MentorSession extends Model
     protected static function booted()
     {
         static::creating(function ($session) {
-            $session->slug = Str::uuid();
+            $session->slug = Str::slug($session->title) . '-' . Str::random(6);
         });
     }
 
